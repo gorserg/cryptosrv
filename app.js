@@ -12,7 +12,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var dotenv = require('dotenv');
-var mime = require('mime');
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -31,9 +30,6 @@ var proxyController = require('./controllers/proxy');
 
 var app = express();
 
-mime.define({
-    'x-user/base64-data': ['text/plain']
-});
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
