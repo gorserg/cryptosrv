@@ -61,10 +61,18 @@ app.use(flash());
  * Primary app routes.
  */
 app.get('/', homeController.index);
-// sign
+// sign - default
 app.get('/sign', signController.index);
-app.get('/sign/:tender_id', signController.getSign);
+app.get('/sign/:tender_id', signController.getSignV1);
 app.post('/sign/:tender_id', signController.postSign);
+// sign - v1
+app.get('/v1/sign', signController.index);
+app.get('/v1/sign/:tender_id', signController.getSignV1);
+app.post('/v1/sign/:tender_id', signController.postSign);
+// sign - v2
+app.get('/v2/sign', signController.index);
+app.get('/v2/sign/:tender_id', signController.getSignV2);
+app.post('/v2/sign/:tender_id', signController.postSign);
 // proxy
 app.post('/proxy', proxyController.postProxy);
 // contact

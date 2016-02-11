@@ -17,19 +17,16 @@ exports.index = function (req, res) {
 
 
 
-exports.getSign = function (req, res) {
+var getSign = function (req, res, cryproLibVer) {
     var data = {};
     data.opApiUri = process.env.OP_API_URI;
-
-
+    data.cryproLibVer = cryproLibVer;
     if (req.params.tender_id && req.query.acc_token) {
         data.obj_id = req.params.tender_id;
         data.obj_access_token = req.query.acc_token;
     }
     else
         res.render('errors', {status: 400, message: "Не вказано обов'язкових параметрів (tender_id або acc_token)"});
-    //data.tender_id = 352d026191c04aaabaa08c45581513f6
-    //data.acc_token=fe09133a1077412399bb16cfc67b4140
 
     var options = {
         url: util.format("%s%s%s", process.env.OP_API_URI, process.env.OP_API_ROUTE, data.obj_id),
@@ -37,7 +34,7 @@ exports.getSign = function (req, res) {
         json: true,
         rejectUnauthorized: false // отключена валидация ssl
     };
-    //console.log('options=' + util.inspect(options));
+
     var callback = function (error, response, body) {
         if (!error && response.statusCode == 200) {
             data.obj = body.data;
@@ -58,8 +55,17 @@ exports.getSign = function (req, res) {
     baseRequest(options, callback);
 };
 
-exports.postSign = function (req, res) {
+// IIT crypto libs
+exports.getSignV1 = function (req, res) {
+    getSign(req, res, 1);
+}
 
+// Cryptosoft crypto libs
+exports.getSignV2 = function (req, res) {
+    getSign(req, res, 2);
+}
+
+exports.postSign = function (req, res) {
     // file with signature pkcs7
     var formData = {
         'file': {
