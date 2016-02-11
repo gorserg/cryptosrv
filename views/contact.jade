@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  .page-header
+    h3 Форма зворотнього зв'язку
+
+  form.form-horizontal(role='form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label(class='col-sm-2 control-label', for='name') І'мя користувача
+      .col-sm-8
+        input.form-control(type='text', name='name', id='name', autofocus=true)
+    .form-group
+      label(class='col-sm-2 control-label', for='email') Пошта
+      .col-sm-8
+        input.form-control(type='text', name='email', id='email')
+    .form-group
+      label(class='col-sm-2 control-label', for='message') Повідомленя
+      .col-sm-8
+        textarea.form-control(type='text', name='message', id='message', rows='7')
+    .form-group
+      .col-sm-offset-2.col-sm-8
+        button.btn.btn-primary(type='submit')
+          i.fa.fa-envelope
+          | Надіслати

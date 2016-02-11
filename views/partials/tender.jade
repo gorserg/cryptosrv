@@ -1,0 +1,78 @@
+p.text-success Інформація про процедуру закупівлі
+    .row
+        .col-sm-4
+            p Початок періоду уточнень:
+        .col-sm-8
+            p #{func.formatDate(data.obj.enquiryPeriod.startDate)}
+    .row
+        .col-sm-4
+            p Завершення періоду уточнень:
+        .col-sm-8
+            p #{func.formatDate(data.obj.enquiryPeriod.endDate)}
+    .row
+        .col-sm-4
+            p Початок прийому пропозицій:
+        .col-sm-8
+            p #{func.formatDate(data.obj.tenderPeriod.startDate)}
+    .row
+        .col-sm-4
+            p Завершення прийому пропозицій:
+        .col-sm-8
+            p #{func.formatDate(data.obj.tenderPeriod.endDate)}
+    .row
+        .col-sm-4
+            p Початок аукціону:
+        .col-sm-8
+            if data.obj.auctionPeriod
+                p #{func.formatDate(data.obj.auctionPeriod.startDate)}
+            else
+                p Буде визначено після завершення періоду уточнень
+
+p.text-success Інформація про предмет закупівлі
+    .row
+        .col-sm-4
+            p Статус:
+        .col-sm-8
+            p #{func.descStatus(data.obj.status)}
+    .row
+        .col-sm-4
+            p Назва закупівлі:
+        .col-sm-8
+            p #{func.descStatus(data.obj.title)}
+    .row
+        .col-sm-4
+            p Детальний опис закупівлі:
+        .col-sm-8
+            p #{func.descStatus(data.obj.description)}
+    .row
+        .col-sm-4
+            p Повний доступний бюджет закупівлі, грн:
+        .col-sm-8
+            p !{func.formatSum(data.obj.value)}
+    .row
+        .col-sm-4
+            p Мінімальний крок аукціону, грн:
+        .col-sm-8
+            p !{func.formatSum(data.obj.minimalStep)}
+    each item in data.obj.items
+        hr
+        .row
+            .col-sm-4
+                p Класифікатор CPV:
+            .col-sm-8
+                p=item.classification.id + ' ' +item.classification.description
+        .row
+            .col-sm-4
+                p Класифікатор ДКПП:
+            .col-sm-8
+                p=item.additionalClassifications[0].id + ' ' + item.additionalClassifications[0].description
+        .row
+            .col-sm-4
+                p Детальний опис предмета закупівлі:
+            .col-sm-8
+                p=item.description
+        .row
+            .col-sm-4
+                p Кількість:
+            .col-sm-8
+                p=item.quantity + ' ' + item.unit.name
