@@ -1,17 +1,16 @@
 extends layout
 
 block content
-    h1 Накладення електронно цифрового підпису на закупівлю
+    h1 Накладення електронно цифрового підпису
     p Адреса API: <i>#{data.opApiUri}</i>
-    .panel.panel-info
-        .panel-heading
-            a(data-toggle="collapse", href='#collapse1') Закупівля #{data.obj.tenderID}
-        .panel-collapse.collapse.in(id='collapse1')
-            .panel-body
-                include partials/tender
-    if data.cryproLibVer == 1
+    if data.type == 'tender'
+        include partials/tender
+    if data.type == 'plan'
+        include partials/plan
+
+    if data.cryptoLibVer == "v1"
         include partials/sign_v1
-    else if data.cryproLibVer == 2
+    else if data.cryptoLibVer == "v2"
         include partials/sign_v2
 
     script(type='text/javascript').

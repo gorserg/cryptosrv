@@ -5,13 +5,20 @@ block content
     h1 Накладення та перевірка підпису для системи ProZorro
 
     p.lead Для накладення підпису потрібно викликати за адресою
-    pre #{url}
-         p &#32;&#32;<i>tender_id</i> - id закупівлі
+    pre #{url}init/:type/sign/v1/:id?acc_token=:acc_token
+         p
+         | &#32;&#32;<i>type</i> - тип об'єкту <b>tender</b> або <b>plan</b>
+         | &#32;&#32;<i>id</i> - ідентифікатор закупівлі чи плану
          | &#32;&#32;<i>acc_token</i> - ключ доступу, отриманий з ЦБД при створенні
+         p тобто, наприклад
+         p /init/tender/sign/v1/b9f98029456d4bb6b2e3b3e2865fcb0b?acc_token=339fc6d09478476e89bb6a6eb4b39dff
+         p /init/plan/sign/v1/9f7f64558f5740b98c504872101a1d12?acc_token=339fc6d09478476e89bb6a6eb4b39dff
     hr
     p Приклади
-        p: a(href='/sign/b9f98029456d4bb6b2e3b3e2865fcb0b?acc_token=339fc6d09478476e89bb6a6eb4b39dff') Закупівля UA-2016-02-11-000025
-        p: a(href='/sign/352d026191c04aaabaa08c45581513f6?acc_token=fe09133a1077412399bb16cfc67b4140') Закупівля UA-2016-02-07-000030
+        p: a(href='/init/tender/sign/v1/b9f98029456d4bb6b2e3b3e2865fcb0b?acc_token=339fc6d09478476e89bb6a6eb4b39dff') Закупівля UA-2016-02-11-000025
+        p: a(href='/init/tender/sign/v1/352d026191c04aaabaa08c45581513f6?acc_token=fe09133a1077412399bb16cfc67b4140') Закупівля UA-2016-02-07-000030
+        p: a(href='/init/plan/sign/v1/9f7f64558f5740b98c504872101a1d12?acc_token=339fc6d09478476e89bb6a6eb4b39dff') План закупівлі UA-P-2016-02-08-000005
     .alert.alert-info
         p Тестовий ключ для підпису &#32;&#32;
-            a(href='/data/Key-6.dat'): span.i.fa.fa-key
+            a(href='/data/Key-6.dat') <<
+                span.i.fa.fa-key >>

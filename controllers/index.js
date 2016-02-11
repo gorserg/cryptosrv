@@ -3,9 +3,17 @@
  * Home page.
  */
 exports.index = function(req, res) {
-    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl + "sign/:tender_id?acc_token=:acc_token";
+    var sampleUri = req.protocol + '://' + req.get('host') + req.originalUrl;
     res.render('index', {
         title: 'Опис серверу підпису',
-        url : fullUrl
+        url : sampleUri
     });
 };
+
+exports.getError = function(req, res) {
+    var err = req.session.error;
+    res.render('error', {
+        message: err.message,
+        error: err
+    });
+}

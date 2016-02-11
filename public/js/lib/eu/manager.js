@@ -776,7 +776,7 @@ function() {
 	signData: function () {
 		var id = local_data.obj_id;
 		var data = JSON.stringify(local_data.obj);
-		var isInternalSign = false;
+		var isInternalSign = true;
 		var isAddCert = true;
 		var isSignHash = false;
 		var dsAlgType = 1;// ДСТУ -1, RSA -2
@@ -800,12 +800,16 @@ function() {
 				}
 				setStatus('');
 				setKeyStatus('Підпису успішно накладено', 'success');
-				$.post('/sign/' + id + '?acc_token=' + local_data.obj_access_token, {sign : sign}).done(function( data ) {
-					if(data.status) {
+				$.post('/sign', {sign : sign}).done(function( data ) {
+					if(data.state) {
 						setKeyStatus('Підпису успішно накладено та передано у ЦБД (код файлу <a href="' + data.responseData.data.url + '">' + data.responseData.data.id + '</a>)', 'success');
 					}
-					else
-						setKeyStatus(data.errorMessage + ' [' + data.error + ']', 'error');
+					else {
+						if(data.statusCode == 401)
+							location.href = '/error';
+						else
+							setKeyStatus(data.errorMessage + ' [' + data.error + ']', 'error');
+					}
 				}).fail(function(error) {
 					setKeyStatus('Помилка відправки підпису до ЦДБ. [' + error + ']', 'error');
 				});

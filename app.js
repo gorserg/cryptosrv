@@ -12,6 +12,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var dotenv = require('dotenv');
+var pjson = require('./package.json');
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -29,6 +30,8 @@ var contactController = require('./controllers/contact');
 var proxyController = require('./controllers/proxy');
 
 var app = express();
+// application version for javascript
+app.locals.version = 'v' + pjson.version;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 // view engine setup
@@ -42,7 +45,7 @@ app.use(expressValidator());
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(bodyParser.text({type : "x-user/base64-data"}));
+app.use(bodyParser.text({type: "x-user/base64-data"}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public'), {maxAge: 31557600000}));
 app.use(session({
@@ -57,18 +60,16 @@ app.use(flash());
  * Primary app routes.
  */
 app.get('/', homeController.index);
-// sign - default
-app.get('/sign', signController.index);
-app.get('/sign/:tender_id', signController.getSignV1);
-app.post('/sign/:tender_id', signController.postSign);
-// sign - v1
-app.get('/v1/sign', signController.index);
-app.get('/v1/sign/:tender_id', signController.getSignV1);
-app.post('/v1/sign/:tender_id', signController.postSign);
-// sign - v2
-app.get('/v2/sign', signController.index);
-app.get('/v2/sign/:tender_id', signController.getSignV2);
-app.post('/v2/sign/:tender_id', signController.postSign);
+
+app.get('/error', homeController.getError);
+
+
+// sign routes
+app.get(['/init/:type/sign/:version/:id', '/init/:type/sign/:id'], signController.redirectSign);
+
+app.get('/sign', signController.getSign);
+app.post('/sign', signController.postSign);
+
 // proxy
 app.post('/proxy', proxyController.postProxy);
 // contact
@@ -100,10 +101,11 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
+    console.log(err);
     res.render('error', {
-        message: err.message,
-        error: {}
-    });
+     message: err.message,
+     error: {}
+     });
 });
 
 

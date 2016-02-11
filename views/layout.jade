@@ -12,13 +12,11 @@ html
         link(rel='stylesheet', href='/css/main.css')
     body
         include partials/header
-
+        script(src='/js/lib/jquery.min.js')
+        script(src='/js/lib/bootstrap.min.js')
+        script(src='/js/main.js')
         .container
             include partials/flash
             block content
 
         include partials/footer
-
-        script(src='/js/lib/jquery.min.js')
-        script(src='/js/lib/bootstrap.min.js')
-        script(src='/js/main.js')

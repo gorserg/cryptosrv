@@ -7,29 +7,66 @@ var https = require('https');
 
 var helpers = require('../helpers/format');
 
+// enable cookies for all requests
 var baseRequest = request.defaults({jar: true});
 
-exports.index = function (req, res) {
-    res.render('index', {
-        title: 'Опис серверу підпису'
-    });
-};
-
-
-
-var getSign = function (req, res, cryproLibVer) {
-    var data = {};
-    data.opApiUri = process.env.OP_API_URI;
-    data.cryproLibVer = cryproLibVer;
-    if (req.params.tender_id && req.query.acc_token) {
-        data.obj_id = req.params.tender_id;
-        data.obj_access_token = req.query.acc_token;
+var throwError = function (req, res, status, message, stack, woRedirect) {
+    var err = {
+        message: message,
+        status: status,
+        stack: stack
     }
-    else
-        res.render('errors', {status: 400, message: "Не вказано обов'язкових параметрів (tender_id або acc_token)"});
+    req.session.error = err;
+    if (!woRedirect)
+        res.redirect('/error');
+}
+
+// default point of entry
+exports.redirectSign = function (req, res) {
+    // remove previous data in session
+    delete req.session.appParams;
+    // check params
+    var params = {
+        id: req.params.id,
+        type: req.params.type,
+        version: req.params.version || 'v1',
+        acc_token: req.query.acc_token
+    };
+    var errorMesage = '';
+
+    if (params.type != 'tender' && params.type != 'plan')
+        errorMesage += "Недопустимий параметр [" + params.type + "], підтримуються типи tender та plan. \n";
+    if (!params.id)
+        errorMesage += "Не вказано ідентифікатор об'єкту\n";
+    if (!params.acc_token)
+        errorMesage += "Не вказано ключ доступу acc_token\n";
+
+    if (errorMesage) {
+        throwError(req, res, 400, 'Помилка у параметрах запиту', errorMesage);
+        return;
+    }
+    // save in session
+    req.session.appParams = params;
+    res.redirect('/sign');
+}
+
+exports.getSign = function (req, res) {
+    // check for session parameters
+    var params = req.session.appParams;
+    if (!params) {
+        throwError(req, res, 400, "Не ініціалізовано сесію, повторіть перехід");
+        return;
+    }
+    var data = {
+        opApiUri: process.env.OP_API_URI,
+        type: params.type,
+        cryptoLibVer: params.version,
+        obj_id: params.id,
+        obj_access_token: params.acc_token
+    }
 
     var options = {
-        url: util.format("%s%s%s", process.env.OP_API_URI, process.env.OP_API_ROUTE, data.obj_id),
+        url: util.format("%s%ss/%s", process.env.OP_API_URI, params.type, data.obj_id), // ../api/0.11/ + (type=tender|plan) + 's' + /xxx
         method: 'GET',
         json: true,
         rejectUnauthorized: false // отключена валидация ssl
@@ -42,30 +79,22 @@ var getSign = function (req, res, cryproLibVer) {
             res.render('sign', {data: data, func: helpers});
         }
         else {
-            var err = {};
-            err.status = response.statusCode;
-            if (err.status)
-                message = "Закупівлю з номером [" + data.tender_id + "] не знайдено";
-            else
-                message = error;
-            res.render('errors', err);
+            throwError(req, res, response.statusCode, "Помилка отримання данних із ЦБД", error);
+            return;
         }
     }
     // call API for data
     baseRequest(options, callback);
 };
 
-// IIT crypto libs
-exports.getSignV1 = function (req, res) {
-    getSign(req, res, 1);
-}
-
-// Cryptosoft crypto libs
-exports.getSignV2 = function (req, res) {
-    getSign(req, res, 2);
-}
-
 exports.postSign = function (req, res) {
+    // check for session parameters
+    var params = req.session.appParams;
+    if (!params) {
+        throwError(req, res, 400, "Не ініціалізовано сесію, повторіть перехід", '', true);
+        res.send({state: false, statusCode: 401});
+        return;
+    }
     // file with signature pkcs7
     var formData = {
         'file': {
@@ -77,19 +106,18 @@ exports.postSign = function (req, res) {
         }
     };
     var options = {
-        url: util.format("%s%s%s/documents?acc_token=%s", process.env.OP_API_URI, process.env.OP_API_ROUTE, req.params.tender_id, req.query.acc_token),
+        url: util.format("%s%ss/%s/documents?acc_token=%s", process.env.OP_API_URI, params.type, params.id, params.acc_token), // ../api/0.11/ + (type=tender|plan) + 's' + /xxx
         method: 'POST',
         formData: formData,
         headers: {
             'Authorization': "Basic " + new Buffer(process.env.OP_API_AUTH + ":").toString('base64')
         }
     };
-
     var callback = function (error, response, body) {
         var data = {};
-        data.status = response.statusCode == 201; // 201 Created
-
-        if (!error && data.status) {
+        data.state = response.statusCode == 201; // 201 Created
+        data.statusCode = response.statusCode;
+        if (!error && data.state) {
             data.responseData = JSON.parse(response.body);
         }
         else {
