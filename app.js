@@ -19,7 +19,6 @@ var mime = require('mime');
  *
  * Default path: .env
  */
-dotenv.load({path: '.env'});
 dotenv.load({path: '.env.common'});
 
 /**
@@ -51,7 +50,7 @@ app.use(bodyParser.text({type : "x-user/base64-data"}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public'), {maxAge: 31557600000}));
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'secret',
     resave: true,
     saveUninitialized: true,
     cookie: {maxAge: 60000}
