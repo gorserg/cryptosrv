@@ -75,4 +75,4 @@ p.text-success Інформація про предмет закупівлі
             .col-sm-4
                 p Кількість:
             .col-sm-8
-                p=item.quantity + ' ' + item.unit.name
+                p=item.quantity + ' ' + ((item.unit.name == undefined) ? ('') : (item.unit.name))
