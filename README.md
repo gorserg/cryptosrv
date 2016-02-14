@@ -1,4 +1,4 @@
 # cryptosrv
-Crypto Server for opernprocurement
+Crypto Server for openprocurement
 
 Demo https://openprocurement-crypto.herokuapp.com/

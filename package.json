@@ -1,14 +1,20 @@
 {
   "name": "cryptosrv",
-  "author" : "sergey.gorobets",
-  "repository" : "https://github.com/gorserg/cryptosrv",
+  "author": "sergey.gorobets",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gorserg/cryptosrv.git"
+  },
   "version": "0.0.2",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "mocha --reporter spec --timeout 5000"
   },
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "~1.13.2",
+    "connect-mongo": "^1.1.0",
     "cookie-parser": "^1.3.5",
     "debug": "~2.2.0",
     "dotenv": "^2.0.0",
@@ -17,12 +23,25 @@
     "express-session": "^1.13.0",
     "express-validator": "^2.19.1",
     "jade": "~1.11.0",
+    "lodash": "^4.3.0",
+    "lusca": "^1.3.0",
     "moment": "^2.11.2",
+    "mongoose": "^4.4.3",
     "morgan": "~1.6.1",
     "nodemailer": "^2.1.0",
     "numeral": "^1.5.3",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.1.0",
+    "passport-google-oauth": "^1.0.0",
+    "passport-local": "^1.0.0",
+    "passport-oauth": "^1.0.0",
     "request": "^2.69.0",
     "serve-favicon": "~2.3.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "supertest": "^1.2.0"
+  }
 }

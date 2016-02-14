@@ -811,7 +811,7 @@ function() {
 							setKeyStatus(data.errorMessage + ' [' + data.error + ']', 'error');
 					}
 				}).fail(function(error) {
-					setKeyStatus('Помилка відправки підпису до ЦДБ. [' + error + ']', 'error');
+					setKeyStatus('Помилка відправки підпису до ЦДБ. [' + error.statusText + '(' + error.status + ')]', 'error');
 				});
 			} catch (e) {
 				setStatus('');
