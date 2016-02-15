@@ -32,7 +32,7 @@
                             p #{func.formatDate(data.obj.auctionPeriod.startDate)}
                         else
                             p Буде визначено після завершення періоду уточнень
-
+            hr
             p.text-success Інформація про предмет закупівлі
                 .row
                     .col-sm-4
@@ -81,3 +81,60 @@
                             p Кількість:
                         .col-sm-8
                             p=item.quantity + ' ' + ((item.unit.name == undefined) ? ('') : (item.unit.name))
+            hr
+            .panel-group
+                .panel.panel-default
+                    .panel-heading
+                        h4.panel-title
+                            a(data-toggle="collapse", href='#collapse2') Документи
+                    .panel-collapse.collapse(id='collapse2')
+                        ul.list-group
+                            if data.obj.documents
+                                each document, index in data.obj.documentsList
+                                    li.list-group-item
+                                        span.i.fa.fa-file
+                                        a(href=document.url)=document.title
+                                            span [ #{func.formatDate(document.dateModified)} ]
+
+                            else
+                                p Документація відсутня
+            hr
+            p.text-success Інформація про Замовника
+                .row
+                    .col-sm-4
+                        p Найменування:
+                    .col-sm-8
+                        p #{data.obj.procuringEntity.name}
+                .row
+                    .col-sm-4
+                        p ЄДРПОУ:
+                    .col-sm-8
+                        p #{data.obj.procuringEntity.identifier.id}
+                .row
+                    .col-sm-4
+                        p Адреса:
+                    .col-sm-8
+                        p #{func.formatAddress(data.obj.procuringEntity.address)}
+            hr
+            p.text-success Контактна особа
+                .row
+                    .col-sm-4
+                        p Найменування:
+                    .col-sm-8
+                        p #{data.obj.procuringEntity.contactPoint.name}
+                .row
+                    .col-sm-4
+                        p E-mail:
+                    .col-sm-8
+                        p #{data.obj.procuringEntity.contactPoint.email}
+                .row
+                    .col-sm-4
+                        p Телефон:
+                    .col-sm-8
+                        p #{data.obj.procuringEntity.contactPoint.telephone}
+                if data.obj.procuringEntity.contactPoint.faxNumber
+                    .row
+                        .col-sm-4
+                            p Факс:
+                        .col-sm-8
+                            p #{data.obj.procuringEntity.contactPoint.faxNumber}
