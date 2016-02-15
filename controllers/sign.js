@@ -4,8 +4,11 @@ var u = require('url');
 var fs = require('fs');
 var http = require('http');
 var https = require('https');
-
+var _ = require('lodash');
 var helpers = require('../helpers/format');
+
+const SIGN_FILENAME = 'sign.p7s';
+const SIGN_CONTENT_TYPE = 'application/pkcs7-signature';
 
 // enable cookies for all requests
 var baseRequest = request.defaults({jar: true});
@@ -76,7 +79,18 @@ exports.getSign = function (req, res) {
         if (!error && response.statusCode == 200) {
             data.obj = body.data;
             data.obj_buffer_b64 = new Buffer(JSON.stringify(data.obj)).toString('base64');
-            res.render('sign', {data: data, func: helpers});
+            // get documents
+            options.url = util.format("%s%ss/%s/documents", process.env.OP_API_URI, params.type, data.obj_id);
+            baseRequest(options, function(error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    data.obj.documentsList = body.data;
+                    res.render('sign', {data: data, func: helpers});
+                }
+                else {
+                    throwError(req, res, response.statusCode, "Помилка отримання данних із ЦБД", error);
+                    return;
+                }
+            });
         }
         else {
             throwError(req, res, response.statusCode, "Помилка отримання данних із ЦБД", error);
@@ -100,33 +114,59 @@ exports.postSign = function (req, res) {
         'file': {
             value: req.body.sign,
             options: {
-                filename: 'sign.p7s',
-                contentType: 'application/pkcs7-signature'
+                filename: SIGN_FILENAME,
+                contentType: SIGN_CONTENT_TYPE
             }
         }
     };
     var options = {
-        url: util.format("%s%ss/%s/documents?acc_token=%s", process.env.OP_API_URI, params.type, params.id, params.acc_token), // ../api/0.11/ + (type=tender|plan) + 's' + /xxx
-        method: 'POST',
-        formData: formData,
-        headers: {
-            'Authorization': "Basic " + new Buffer(process.env.OP_API_AUTH + ":").toString('base64')
-        }
+        url: util.format("%s%ss/%s/documents", process.env.OP_API_URI, params.type, params.id),
+        method: 'GET',
+        json: true
     };
     var callback = function (error, response, body) {
         var data = {};
-        data.state = response.statusCode == 201; // 201 Created
+        data.state = (response.statusCode == 200);
         data.statusCode = response.statusCode;
-        if (!error && data.state) {
-            data.responseData = JSON.parse(response.body);
+        if (!error && response.statusCode === 200) {
+            options = {
+                formData: formData,
+                headers: {
+                    'Authorization': "Basic " + new Buffer(process.env.OP_API_AUTH + ":").toString('base64')
+                }
+            };
+            // try find document with signature
+            var signDocument = _.find(body.data, {format: "application/pkcs7-signature", title: "sign.p7s"});
+            if (signDocument) {
+                options.method = 'PUT';
+                options.url = util.format("%s%ss/%s/documents/%s?acc_token=%s", process.env.OP_API_URI, params.type, params.id, signDocument.id, params.acc_token);
+            }
+            else {
+                options.method = 'POST';
+                options.url = util.format("%s%ss/%s/documents?acc_token=%s", process.env.OP_API_URI, params.type, params.id, params.acc_token);
+            }
+            console.log(options);
+            callback = function (error, response, body) {
+                data.state = (response.statusCode == 201 || response.statusCode == 200); // 201 - POST, 200 - PUT
+                data.statusCode = response.statusCode;
+                if (!error && data.state) {
+                    data.responseData = JSON.parse(response.body);
+                }
+                else {
+                    data.errorMessage = "Не вдалося записати документ з підписом у ЦБД";
+                    data.error = error;
+                }
+                res.send(data);
+            };
+            // call POST/PUT
+            baseRequest(options, callback);
         }
         else {
-            data.errorMessage = "Не вдалося записати документ з підписом у ЦБД";
+            data.errorMessage = "Не вдалося прочитати список документів";
             data.error = error;
         }
-        res.send(data);
     }
-    // call API for data
+    // read current documents
     baseRequest(options, callback);
 }
 

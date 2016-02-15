@@ -43,7 +43,7 @@ var userController = require('./controllers/user');
 var app = express();
 
 // application version for javascript
-app.locals.version = 'v=' + pjson.version;
+app.locals.version = pjson.version;
 
 /**
  * Try connect to MongoDB.

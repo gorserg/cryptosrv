@@ -20,6 +20,10 @@ exports.formatSum = function(obj){
     return util.format("%s %s %s", obj.amount.format(), obj.currency, tax);
 };
 
+exports.formatAddress = function(address){
+    return util.format("%s, %s, %s, %s, %s", address.postalCode, address.countryName,  address.region, address.locality, address.streetAddress);
+};
+
 exports.descStatus = function (status_code) {
     var status = '';
     switch (status_code) {
