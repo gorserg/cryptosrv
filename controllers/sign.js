@@ -61,7 +61,7 @@ exports.getSign = function (req, res) {
         return;
     }
     var data = {
-        opApiUri: process.env.OP_API_URI,
+        opApiUri: util.format("%s%ss/%s?opt_pretty=1", process.env.OP_API_URI, params.type, params.id),
         type: params.type,
         cryptoLibVer: params.version,
         obj_id: params.id,
@@ -81,14 +81,21 @@ exports.getSign = function (req, res) {
             data.obj_buffer_b64 = new Buffer(JSON.stringify(data.obj)).toString('base64');
             // get documents
             options.url = util.format("%s%ss/%s/documents", process.env.OP_API_URI, params.type, data.obj_id);
-            baseRequest(options, function(error, response, body) {
+            baseRequest(options, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
-                    data.obj.documentsList = body.data;
+                    data.documentsList = body.data;
                     res.render('sign', {data: data, func: helpers});
                 }
                 else {
-                    throwError(req, res, response.statusCode, "Помилка отримання данних із ЦБД", error);
-                    return;
+                    // todo add documents to plan
+                    if (data.type == 'plan') {
+                        data.documentsList = [];
+                        res.render('sign', {data: data, func: helpers});
+                    }
+                    else {
+                        throwError(req, res, response.statusCode, "Помилка отримання данних по документах із ЦБД", error);
+                        return;
+                    }
                 }
             });
         }
@@ -145,7 +152,6 @@ exports.postSign = function (req, res) {
                 options.method = 'POST';
                 options.url = util.format("%s%ss/%s/documents?acc_token=%s", process.env.OP_API_URI, params.type, params.id, params.acc_token);
             }
-            console.log(options);
             callback = function (error, response, body) {
                 data.state = (response.statusCode == 201 || response.statusCode == 200); // 201 - POST, 200 - PUT
                 data.statusCode = response.statusCode;
@@ -164,6 +170,7 @@ exports.postSign = function (req, res) {
         else {
             data.errorMessage = "Не вдалося прочитати список документів";
             data.error = error;
+            res.send(data);
         }
     }
     // read current documents
