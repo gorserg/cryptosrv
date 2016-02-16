@@ -1,12 +1,10 @@
 extends layout
 
 block content
-    h1 Накладення електронно цифрового підпису
+    h1 Перевірка електронно цифрового підпису
     p Адреса документу: <a href='#{data.opApiUri}'>#{data.opApiUri}</a>
-    if data.cryptoLibVer == "v1"
-        include partials/sign_v1
-    else if data.cryptoLibVer == "v2"
-        include partials/sign_v2
+
+    include partials/check_v1
 
     if data.type == 'tender'
         include partials/tender

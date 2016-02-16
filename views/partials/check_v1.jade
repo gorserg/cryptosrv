@@ -1,0 +1,27 @@
+// work with IIT javascript
+link(rel='stylesheet', href='/css/html.css')
+.panel.panel-default(id='infoPanel')
+    .panel-heading Перевірка підпису
+        span(id='status')
+    .panel-body
+        if !data.signDocument
+            .alert.alert-warning Підпис ще на накладено (не знайдено файл підпису)
+        else
+            .alert.alert-success(id='verificationSuccess', style='display:none')
+            .alert.alert-danger(id='verificationError', style='display:none') Підпис невірний, модифіковані дані:
+                .alert.alert-warning(id='verificationErrorDiff')
+            .alert.alert-info(id='certInfo', style='display:none')
+
+    select(id='CAsServersSelect', style='display:none')
+    output(id='SelectedCertsList', style='display:none')
+    output(id='SelectedCRLsList', style='display:none')
+
+script(type='text/javascript').
+    var verificationFlag = true;
+script(src='/js/lib/jsondiffpatch.min.js')
+script(src='/js/lib/jsondiffpatch-formatters.min.js')
+script(src='/js/lib/eu/euscpt.js')
+script(src='/js/lib/eu/euscpm.js')
+script(src='/js/lib/eu/euscp.js')
+script(src='/js/lib/eu/euutils.js')
+script(src='/js/lib/eu/manager.js?v=#{version}')

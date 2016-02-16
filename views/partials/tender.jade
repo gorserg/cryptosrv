@@ -90,7 +90,7 @@
                     .panel-collapse.collapse(id='collapse2')
                         ul.list-group
                             if data.obj.documents
-                                each document, index in data.obj.documentsList
+                                each document, index in data.documentsList
                                     li.list-group-item
                                         span.i.fa.fa-file
                                         a(href=document.url)=document.title
