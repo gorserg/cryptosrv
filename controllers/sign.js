@@ -33,7 +33,8 @@ exports.redirectSign = function (req, res) {
         id: req.params.id,
         type: req.params.type,
         version: req.params.version || 'v1',
-        acc_token: req.query.acc_token
+        acc_token: req.query.acc_token,
+        apiVersion : req.params.apiVersion || '0.11'
     };
     var errorMesage = '';
 
@@ -61,7 +62,7 @@ exports.getSign = function (req, res) {
         return;
     }
     var data = {
-        opApiUri: util.format("%s%ss/%s?opt_pretty=1", process.env.OP_API_URI, params.type, params.id),
+        opApiUri: util.format("%s%s/%ss/%s?opt_pretty=1", process.env.OP_API_URI, params.apiVersion, params.type, params.id),
         type: params.type,
         cryptoLibVer: params.version,
         obj_id: params.id,
@@ -69,7 +70,7 @@ exports.getSign = function (req, res) {
     }
 
     var options = {
-        url: util.format("%s%ss/%s", process.env.OP_API_URI, params.type, data.obj_id), // ../api/0.11/ + (type=tender|plan) + 's' + /xxx
+        url: util.format("%s%s/%ss/%s", process.env.OP_API_URI, params.apiVersion, params.type, data.obj_id), // ../api/0.11/ + (type=tender|plan) + 's' + /xxx
         method: 'GET',
         json: true,
         rejectUnauthorized: false // отключена валидация ssl
@@ -80,7 +81,7 @@ exports.getSign = function (req, res) {
             data.obj = body.data;
             data.obj_buffer_b64 = new Buffer(JSON.stringify(data.obj)).toString('base64');
             // get documents
-            options.url = util.format("%s%ss/%s/documents", process.env.OP_API_URI, params.type, data.obj_id);
+            options.url = util.format("%s%s/%ss/%s/documents", process.env.OP_API_URI, params.apiVersion, params.type, data.obj_id);
             baseRequest(options, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
                     data.documentsList = body.data;
@@ -127,7 +128,7 @@ exports.postSign = function (req, res) {
         }
     };
     var options = {
-        url: util.format("%s%ss/%s/documents", process.env.OP_API_URI, params.type, params.id),
+        url: util.format("%s%s/%ss/%s/documents", process.env.OP_API_URI, params.apiVersion, params.type, params.id),
         method: 'GET',
         json: true
     };
@@ -146,11 +147,11 @@ exports.postSign = function (req, res) {
             var signDocument = _.find(body.data, {format: "application/pkcs7-signature", title: "sign.p7s"});
             if (signDocument) {
                 options.method = 'PUT';
-                options.url = util.format("%s%ss/%s/documents/%s?acc_token=%s", process.env.OP_API_URI, params.type, params.id, signDocument.id, params.acc_token);
+                options.url = util.format("%s%s/%ss/%s/documents/%s?acc_token=%s", process.env.OP_API_URI, params.apiVersion, params.type, params.id, signDocument.id, params.acc_token);
             }
             else {
                 options.method = 'POST';
-                options.url = util.format("%s%ss/%s/documents?acc_token=%s", process.env.OP_API_URI, params.type, params.id, params.acc_token);
+                options.url = util.format("%s%s/%ss/%s/documents?acc_token=%s", process.env.OP_API_URI, params.apiVersion, params.type, params.id, params.acc_token);
             }
             callback = function (error, response, body) {
                 data.state = (response.statusCode == 201 || response.statusCode == 200); // 201 - POST, 200 - PUT

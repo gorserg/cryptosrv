@@ -107,11 +107,11 @@ app.get('/', homeController.index);
 app.get('/error', homeController.getError);
 
 // sign routes
-app.get(['/init/:type/sign/:version/:id', '/init/:type/sign/:id'], signController.redirectSign);
+app.get(['/init/:type/sign/:version/:apiVersion/:id', '/init/:type/sign/:version/:id', '/init/:type/sign/:id'], signController.redirectSign);
 app.get('/sign', signController.getSign);
 app.post('/sign', signController.postSign);
 // check routes
-app.get(['/init/:type/check/:version/:id', '/init/:type/sign/:id'], checkController.redirectCheck);
+app.get(['/init/:type/check/:version/:apiVersion/:id', '/init/:type/check/:version/:id', '/init/:type/check/:id'], checkController.redirectCheck);
 app.get('/check', checkController.getCheck);
 
 // proxy

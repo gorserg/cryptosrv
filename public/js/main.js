@@ -10,6 +10,8 @@ function prepareObject(json_object) {
                 result.documents.splice(index, 1);
             }
         }
+        if(result.documents.length === 0)
+            delete result['documents'];
     }
     return JSON.stringify(result);
 }

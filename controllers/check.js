@@ -13,6 +13,17 @@ const SIGN_CONTENT_TYPE = 'application/pkcs7-signature';
 // enable cookies for all requests
 var baseRequest = request.defaults({jar: true});
 
+var throwError = function (req, res, status, message, stack, woRedirect) {
+    var err = {
+        message: message,
+        status: status,
+        stack: stack
+    }
+    req.session.error = err;
+    if (!woRedirect)
+        res.redirect('/error');
+}
+
 // default point of entry
 exports.redirectCheck = function (req, res) {
     // remove previous data in session
@@ -22,6 +33,7 @@ exports.redirectCheck = function (req, res) {
         id: req.params.id,
         type: req.params.type,
         version: req.params.version || 'v1',
+        apiVersion : req.params.apiVersion || '0.11'
     };
     var errorMesage = '';
 
@@ -47,13 +59,13 @@ exports.getCheck = function (req, res) {
         return;
     }
     var data = {
-        opApiUri: util.format("%s%ss/%s?opt_pretty=1", process.env.OP_API_URI, params.type, params.id),
+        opApiUri: util.format("%s%s/%ss/%s?opt_pretty=1", process.env.OP_API_URI, params.apiVersion, params.type, params.id),
         type: params.type,
         obj_id: params.id
     }
 
     var options = {
-        url: util.format("%s%ss/%s", process.env.OP_API_URI, params.type, data.obj_id), // ../api/0.11/ + (type=tender|plan) + 's' + /xxx
+        url: util.format("%s%s/%ss/%s", process.env.OP_API_URI, params.apiVersion, params.type, data.obj_id), // ../api/0.11/ + (type=tender|plan) + 's' + /xxx
         method: 'GET',
         json: true,
         rejectUnauthorized: false // отключена валидация ssl
@@ -63,7 +75,7 @@ exports.getCheck = function (req, res) {
         if (!error && response.statusCode == 200) {
             data.obj = body.data;
             // get documents
-            options.url = util.format("%s%ss/%s/documents", process.env.OP_API_URI, params.type, data.obj_id);
+            options.url = util.format("%s%s/%ss/%s/documents", process.env.OP_API_URI, params.apiVersion, params.type, data.obj_id);
             baseRequest(options, function(error, response, body) {
                 if (!error && response.statusCode == 200) {
                     data.documentsList = body.data;

@@ -860,7 +860,7 @@ var EUSignCPTest = NewClass({
 
                         if (isInternalSign) {
                             message += "\n";
-                            var signData = euSign.ArrayToString(info.GetData());
+                            var signData = prepareObject(JSON.parse(euSign.ArrayToString(info.GetData())));
                             var currData = prepareObject(local_data.obj);
                             jsondiffpatch.formatters.html.hideUnchanged();
                             var delta = jsondiffpatch.diff(JSON.parse(signData), JSON.parse(currData));
