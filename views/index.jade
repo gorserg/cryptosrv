@@ -5,91 +5,44 @@ block content
     h1 Накладення та перевірка підпису для системи ProZorro
 
     p.lead Для накладення\перевірки підпису потрібно викликати за адресами
-    pre підпис    - #{url}init/:type/sign/v1/:id?acc_token=:acc_token
+    pre підпис    - #{url}init/:type/sign/v1/:api_version/:id?acc_token=:acc_token
          p перевірка - #{url}init/:type/check/v1/:id
          p де
-         | &#32;&#32;<i>type</i> - тип об'єкту <b>tender</b> або <b>plan</b>
+         | &#32;&#32;<i>type</i> - тип об'єкту <b>tenders</b> або <b>plans</b>
+         | &#32;&#32;<i>api_version</i> - версія API (0.11, 0.12, 2.0, 2.1 і т.д.)
          | &#32;&#32;<i>id</i> - ідентифікатор закупівлі чи плану
-         | &#32;&#32;<i>acc_token</i> - ключ доступу, отриманий з ЦБД при створенні
+         | &#32;&#32;<i>acc_token</i> - ключ доступу, отриманий з ЦБД при створенні (опціонально, у разі відсутності вставка підпису буде неможлива)
          p тобто, наприклад
-         p /init/tender/sign/v1/b9f98029456d4bb6b2e3b3e2865fcb0b?acc_token=339fc6d09478476e89bb6a6eb4b39dff
-         p /init/plan/sign/v1/9f7f64558f5740b98c504872101a1d12?acc_token=339fc6d09478476e89bb6a6eb4b39dff
-         p /init/tender/check/v1/b9f98029456d4bb6b2e3b3e2865fcb0b
+         p /init/tenders/sign/v1/0.11/b9f98029456d4bb6b2e3b3e2865fcb0b?acc_token=339fc6d09478476e89bb6a6eb4b39dff
+         p /init/plans/sign/v1/0.11/9f7f64558f5740b98c504872101a1d12?acc_token=339fc6d09478476e89bb6a6eb4b39dff
+         p /init/tenders/check/v1/0.11/b9f98029456d4bb6b2e3b3e2865fcb0b
     hr
-    p Приклади підпису
-        .list-group
 
-            .list-group-item
+    .panel.panel-info
+        .panel-heading
+            a(data-toggle="collapse", href='#collapse1') Виклик для існуючого об'єкту
+        .panel-collapse.collapse.in(id='collapse1')
+            .panel-body
                 .row
-                    .col-sm-3
-                        p Закупівля UA-2016-03-04-000030-2
                     .col-sm-1
-                    .col-sm-1
-                        a(href='/init/tender/check/v1/0.12/fae0de97deab4b289f0b53bb64e8e09b') Перевірка
-            .list-group-item
-                .row
-                    .col-sm-3
-                        p 3 Закупівля UA-2016-02-07-000028-2
-                    .col-sm-1
-                        a(href='/init/tender/sign/v1/9835f4f342f04b22aaaf2c40f25cfe80?acc_token=707d10df7b7540ddbd09f4a9791f5337') Підпис
-                    .col-sm-1
-                        a(href='/init/tender/check/v1/9835f4f342f04b22aaaf2c40f25cfe80') Перевірка
-            .list-group-item
-                .row
-                    .col-sm-3
-                        p 2 Закупівля UA-2016-02-07-000027-2
-                    .col-sm-1
-                        a(href='/init/tender/sign/v1/33681f0176574ea498fe2763dae9c124?acc_token=b3e2bf9673b84892a683a795e158bef6') Підпис
-                    .col-sm-1
-                        a(href='/init/tender/check/v1/33681f0176574ea498fe2763dae9c124') Перевірка
-            .list-group-item
-                .row
-                    .col-sm-3
-                        p 1 Закупівля UA-2016-02-07-000026-2
-                    .col-sm-1
-                        a(href='/init/tender/sign/v1/b64001cdaa1540e7a17c14d0207e3feb?acc_token=7e75b957ae06494188aba189c2473175') Підпис
-                    .col-sm-1
-                        a(href='/init/tender/check/v1/b64001cdaa1540e7a17c14d0207e3feb') Перевірка
-            .list-group-item
-                .row
-                    .col-sm-3
-                        p Закупівля UA-2016-02-07-000043-1
-                    .col-sm-1
-                        a(href='/init/tender/sign/v1/d747a479adcb47a5853bd185c90b0f90?acc_token=00d4f6aff4974bb9ac01a4da3e67771b') Підпис
-                    .col-sm-1
-                        a(href='/init/tender/check/v1/d747a479adcb47a5853bd185c90b0f90') Перевірка
-            .list-group-item
-                .row
-                    .col-sm-3
-                        p Закупівля UA-2016-02-15-000047-1
-                    .col-sm-1
-                        a(href='/init/tender/sign/v1/3e50cb086014422caf0db8198129bfee?acc_token=987a7af912e949d98c318db3af534a20') Підпис
-                    .col-sm-1
-                        a(href='/init/tender/check/v1/3e50cb086014422caf0db8198129bfee') Перевірка
-            .list-group-item
-                .row
-                    .col-sm-3
-                        p Закупівля UA-2016-02-15-000051-1
-                    .col-sm-1
-                        a(href='/init/tender/sign/v1/d792af58475a4a2bb65db73774c016f8?acc_token=6f377e37f8e340189d6a47df5e21873b') Підпис
-                    .col-sm-1
-                        a(href='/init/tender/check/v1/d792af58475a4a2bb65db73774c016f8') Перевірка
-            .list-group-item
-                .row
-                    .col-sm-3
-                        p Закупівля UA-2016-02-15-000045-1
-                    .col-sm-1
-                        a(href='/init/tender/sign/v1/68b50da6aae343628bdb81956ce8b764?acc_token=8ea5b6604f754f89aeb161a97c0b78fa') Підпис
-                    .col-sm-1
-                        a(href='/init/tender/check/v1/68b50da6aae343628bdb81956ce8b764') Перевірка
-            .list-group-item
-                .row
-                    .col-sm-3
-                        p План UA-P-2016-02-08-000005
-                    .col-sm-1
-                        a(href='/init/plan/sign/v1/44e9ca1e3bd9459983af16d787f1f801?acc_token=ce51168e5942450ba785363cf67522cd') Підпис
-                    .col-sm-1
-                        a(href='/init/plan/check/v1/44e9ca1e3bd9459983af16d787f1f801') Перевірка
+                        p Адреса
+                    .col-sm-10
+                        input(type='text', id='txtUrl', style='width:880px', value='https://public.api.openprocurement.org/api/2.3/tenders/798f45011ce04448b8a95e45bdaee4e8')
+                        button.btn.btn-default(onclick="redirectFromApi(document.getElementById('txtUrl').value)") Перевірка
+
+    .panel.panel-info
+        .panel-heading
+            a(data-toggle="collapse", href='#collapse2') Перегляд підписаних об'єктів по ЦБД
+        .panel-collapse.collapse.in(id='collapse2')
+            .panel-body
+                .btn-group
+                    button.btn.btn-info(style='width:180px',onclick="redirectToWatch('https://lb.api-sandbox.openprocurement.org', '2.3', 'tender')") sandbox(tenders)2.3
+                    button.btn.btn-info(style='width:180px',onclick="redirectToWatch('https://lb.api-sandbox.openprocurement.org', '2.3', 'plan')") sandbox(plans)2.3
+                    button.btn.btn-info(style='width:180px',onclick="redirectToWatch('https://lb.api-sandbox.openprocurement.org', 'dev', 'tender')") sandbox(tenders)dev
+                    button.btn.btn-info(style='width:180px',onclick="redirectToWatch('https://lb.api-sandbox.openprocurement.org', 'dev', 'plan')") sandbox(plans)dev
+                .btn-group
+                    button.btn.btn-info(style='width:180px',onclick="redirectToWatch('https://public.api.openprocurement.org', '0', 'tender')") public(tenders)
+                    button.btn.btn-info(style='width:180px',onclick="redirectToWatch('https://public.api.openprocurement.org', '0', 'plan')") public(plans)
     .alert.alert-info
         p Тестовий ключ та сертифікат для підпису &#32;&#32;
             a(href='/data/Key-6.dat') <<

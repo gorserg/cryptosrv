@@ -52,7 +52,6 @@ app.locals.version = pjson.version;
 mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB);
 mongoose.connection.on('error', function() {
     console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
-
 });
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -106,8 +105,11 @@ app.use(function(req, res, next) {
 app.get('/', homeController.index);
 app.get('/error', homeController.getError);
 
+//
+app.get(['/observe'], signController.observe);
+
 // sign routes
-app.get(['/init/:type/sign/:version/:apiVersion/:id', '/init/:type/sign/:version/:id', '/init/:type/sign/:id'], signController.redirectSign);
+app.get(['/init'], signController.redirectSign);
 app.get('/sign', signController.getSign);
 app.post('/sign', signController.postSign);
 // check routes

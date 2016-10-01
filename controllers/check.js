@@ -59,7 +59,7 @@ exports.getCheck = function (req, res) {
         return;
     }
     var data = {
-        opApiUri: util.format("%s%s/%ss/%s?opt_pretty=1", process.env.OP_API_URI, params.apiVersion, params.type, params.id),
+        opApiUri: util.format("%s%s/%ss/%s", process.env.OP_API_URI, params.apiVersion, params.type, params.id),
         type: params.type,
         obj_id: params.id
     }

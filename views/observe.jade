@@ -1,0 +1,26 @@
+extends layout
+
+block content
+    h1 Перегляд підписаних об'єктів у ЦБД
+    p Адреса API: #{data.apiUrl}
+    .panel.panel-info
+        .panel-heading
+            a(data-toggle="collapse", href='#collapse1') #{data.title}
+        .panel-collapse.collapse.in(id='collapse1')
+            .panel-body
+                .label.alert-info Всього: #{data.totalCount}, з підписом #{data.signedCount}
+                .list-group
+                each obj in data.objList
+                    .list-group-item
+                        .row
+                            .col-sm-4
+                                a(href='/init?resourceUrl=' + data.apiUrl + '/' + data.resourceType + 's/' + obj.id) #{obj.itemTitle} #{obj.tenderID}#{obj.planID}(#{obj.owner})
+                            .col-sm-4
+                                .label(style='padding-left: 40px') <a href='http://openprocurement-crypto.github.io?resourceUrl=#{data.apiUrl}/#{data.resourceType}s/#{obj.id}'>#{obj.id}</a>
+                            .col-sm-2
+                                .label(style='padding-left: 40px') <a href='https://prozorro.gov.ua/#{data.resourceType}/#{obj.tenderID}#{obj.planID}/'>Портал</a>
+                            .col-sm-1
+                                .badge #{func.formatDate(obj.dateModified)}
+
+    script(type='text/javascript').
+        var local_data = !{JSON.stringify(data)};

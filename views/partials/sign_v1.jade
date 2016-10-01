@@ -1,51 +1,6 @@
+link(rel='stylesheet', href='/css/html.css')
 // work with IIT javascript
-.panel.panel-default(id='infoPanel')
-    .panel-heading Накладення підпису
-        span(id='status')
-    .panel-body
-        .row
-            .col-sm-2
-                p Оберіть ЦСК:
-            .col-sm-10
-                select(id='CAsServersSelect')
-        .panel.panel-info(id='keyStatusPanel')
-            .panel-heading
-                span(id='ChoosePKFileText')
-            .panel-body
-                .row(id='PKCertsSelectZone', hidden='hidden')
-                    .col-sm-2
-                        p Особисті сертифікати:
-                    .col-sm-2
-                    .col-sm-1
-                        button.btn.btn-default(id='ChoosePKCertsButton', onclick="document.getElementById('ChoosePKCertsInput').click();") Обрати
-                        input(type="file", multiple=true, id="ChoosePKCertsInput", style="visibility:hidden")
-                    .col-sm-7
-                        output(id="SelectedPKCertsList")
-                .row
-                    .col-sm-2
-                        p Особистий ключ:
-                    .col-sm-2
-                        input.form-control.form-control-sm(readonly='true', id='PKeyFileName' onclick="document.getElementById('PKeyFileInput').click();", style="width:180px")
-                    .col-sm-8
-                        button.btn.btn-default(id='PKeySelectFileButton', onclick="document.getElementById('PKeyFileInput').click();") Обрати
-                        input(type="file", multiple=false, id="PKeyFileInput", style="visibility:hidden")
-                .row
-                    .col-sm-2
-                        p Пароль захисту ключа:
-                    .col-sm-2
-                        input.form-control.form-control-sm(type='password', id="PKeyPassword", style="width:180px")
-                    .col-sm-6
-                        button.btn.btn-default(id='PKeyReadButton', onclick="euSignTest.readPrivateKeyButtonClick()") Зчитати
-                    .col-sm-2
-                        button.btn.btn-info.pull-right(id='SignDataButton',onclick="euSignTest.signData()", disabled=true) Підписати
-
-                .alert.alert-info(id='certInfo', style='display:none')
-
-                output(id='SelectedCertsList', style='display:none')
-                output(id='SelectedCRLsList', style='display:none')
-
-script(src='/js/lib/eu/euscpt.js')
-script(src='/js/lib/eu/euscpm.js')
-script(src='/js/lib/eu/euscp.js')
-script(src='/js/lib/eu/euutils.js')
-script(src='/js/lib/eu/manager.js?v=#{version}')
+.div(id="signPlaceholder")
+//script(src='https://rawgit.com/openprocurement-crypto/common/master/js/index.js?v=#{version}')
+script(src='http://10.10.10.97:8083/js/index.js?v=#{version}')
+script(src='/js/main.js?v=#{version}')
